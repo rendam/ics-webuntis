@@ -127,6 +127,41 @@ function matchesSubjectFilter(
     return true;
 }
 
+
+/*
+ * The legacy timetable API does not mark exams. The web-client weekly API
+ * does (`is.exam`), so fetch it for every week in the range and return a map
+ * of "date|startTime" -> exam lesson text (e.g. "SA E"). Best effort: any
+ * failure results in no exams being marked.
+ */
+async function fetchExamInfo(
+    untis: WebUntis,
+    start: Date,
+    end: Date,
+): Promise<Map<string, string>> {
+    const exams = new Map<string, string>();
+    const day = new Date(start);
+    day.setDate(day.getDate() - ((day.getDay() + 6) % 7)); // Monday of first week
+    while (day <= end) {
+        try {
+            const week: any[] = await untis.getOwnTimetableForWeek(
+                new Date(day),
+            );
+            for (const p of week) {
+                if (p.is?.exam || p.exam) {
+                    exams.set(`${p.date}|${p.startTime}`, p.lessonText || "");
+                }
+            }
+        } catch (err: any) {
+            console.warn(
+                `Failed to fetch exam info for week of ${day.toDateString()}: ${err?.message ?? err}`,
+            );
+        }
+        day.setDate(day.getDate() + 7);
+    }
+    return exams;
+}
+
 export async function fetchTimetable(
     user: User,
     startDate: Date,
@@ -232,6 +267,7 @@ export async function fetchTimetable(
         }
 
         let rawTimetable: any[];
+        let examInfo = new Map<string, string>();
         if (!type || numericId === undefined) {
             rawTimetable = await untis.getOwnTimetableForRange(
                 clampedStartDate,
@@ -239,6 +275,12 @@ export async function fetchTimetable(
             );
 
             logDiscoveredSubjects(user, rawTimetable);
+
+            examInfo = await fetchExamInfo(
+                untis,
+                clampedStartDate,
+                clampedEndDate,
+            );
 
             // Temporary diagnostics: set DEBUG_RAW_ENTRIES=1 to log raw entries
             // (no teacher/room names) so the exam marker field can be found.
@@ -264,40 +306,6 @@ export async function fetchTimetable(
                 // one line per entry: long single lines get split by Docker (16 KB)
                 for (const row of summary) {
                     console.log("RAW_ENTRY " + JSON.stringify(row));
-                }
-
-                // Web-client weekly API: may carry exam flags the legacy API lacks
-                try {
-                    const day = new Date(clampedStartDate);
-                    while (day <= clampedEndDate) {
-                        const week: any[] = await untis.getOwnTimetableForWeek(
-                            day,
-                        );
-                        for (const p of week) {
-                            console.log(
-                                "RAW_WEEK " +
-                                    JSON.stringify({
-                                        date: p.date,
-                                        start: p.startTime,
-                                        end: p.endTime,
-                                        subjects: p.subjects?.map(
-                                            (x: any) => x.element?.name,
-                                        ),
-                                        lessonCode: p.lessonCode,
-                                        lessonText: p.lessonText,
-                                        periodText: p.periodText,
-                                        substText: p.substText,
-                                        is: p.is,
-                                        flags: p.flags,
-                                        studentGroup: p.studentGroup,
-                                        keys: Object.keys(p),
-                                    }),
-                            );
-                        }
-                        day.setDate(day.getDate() + 7);
-                    }
-                } catch (err: any) {
-                    console.log("RAW_WEEK_ERROR " + (err?.message ?? err));
                 }
             }
 
@@ -355,10 +363,13 @@ export async function fetchTimetable(
                 room: entry.ro?.[0]?.name || "Unknown Room",
                 class: entry.kl?.map((k: any) => k.name) || ["Unknown Class"],
                 date: parseUntisDate(entry.date),
-                lstext: entry.lstext || "No Text",
+                lstext:
+                    entry.lstext ||
+                    examInfo.get(`${entry.date}|${entry.startTime}`) ||
+                    "No Text",
                 status: entry.code || "confirmed",
                 allDay: isRestrictedEntry(entry),
-                isExam: entry.lstype === "ex",
+                isExam: examInfo.has(`${entry.date}|${entry.startTime}`),
             }));
 
         if (lessons.length === 0) {
