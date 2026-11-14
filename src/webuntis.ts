@@ -261,7 +261,10 @@ export async function fetchTimetable(
                     substText: e.substText,
                     keys: Object.keys(e),
                 }));
-                console.log("RAW_ENTRIES " + JSON.stringify(summary));
+                // one line per entry: long single lines get split by Docker (16 KB)
+                for (const row of summary) {
+                    console.log("RAW_ENTRY " + JSON.stringify(row));
+                }
             }
 
             const subjectsWhitelist = createSubjectSet(user.subjectsWhitelist);
