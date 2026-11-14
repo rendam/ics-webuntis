@@ -133,6 +133,10 @@ export function lessonsToIcs(
             calSummary = markCancelled(calSummary);
         }
 
+        if (l.isExam) {
+            calSummary = `${t("calendar.exam")}: ${calSummary}`;
+        }
+
         const calDescription = `${t("calendar.subject")}: ${
             l.subject
         }\n${t("calendar.teacher")}: ${l.teacher.join(", ")}\n${t("calendar.room")}: ${
@@ -162,6 +166,7 @@ export function lessonsToIcs(
             location: l.room,
             description: calDescription,
             status: calStatus as ICalEventStatus,
+            categories: l.isExam ? [{ name: "EXAM" }] : undefined,
         });
         eventColors.push(resolveSubjectOverride(l.subject, subjectColors));
     }

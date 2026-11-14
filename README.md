@@ -81,6 +81,7 @@ The service requires a JSON configuration file.
             "language": "en",
             "cancelledDisplay": "mark",
             "showHolidays": true,
+            "showBreaks": true,
             "accessToken": "my-secret-token",
             "subjectTitles": {
                 "2ku1": "Art",
@@ -112,6 +113,7 @@ The service requires a JSON configuration file.
 | `users[].language`             | string  | `en`            | No       | Preferred language for the user (supported values: `en`, `de`).                                                                                                                                               |
 | `users[].cancelledDisplay`     | string  | `show`          | No       | How to handle cancelled lessons. Options: `hide` (exclude them entirely), `mark` (include them but marked as CANCELLED), `show` (include them and clients decide on how to handle the ICS `STATUS` property). |
 | `users[].showHolidays`         | boolean | `true`          | No       | Whether school holidays are included as all-day entries in this user's calendar feed. Set to `false` to omit them.                                                                                            |
+| `users[].showBreaks` | boolean | `true` | No | Whether generated school-day break ("Pause") events are included. Set to `false` to omit them. Lessons marked as exams (WebUntis `lstype` `ex`) are prefixed with "Prüfung:"/"Exam:" and get `CATEGORIES:EXAM`. |
 | `users[].accessToken`          | string  | -               | No       | Optional access token(s) required to access this user's timetable.                                                                                                                                            |
 | `users[].subjectTitles`        | object  | -               | No       | Maps WebUntis subject identifiers (e.g. `2ku1`) to a custom event title used in place of the raw subject code. Matching is case-insensitive and ignores leading/trailing whitespace.                          |
 | `users[].subjectColors`        | object  | -               | No       | Maps WebUntis subject identifiers to a CSS3 color name (e.g. `coral`, `darkblue`) applied to matching events via the ICS `COLOR` property. See [Colors](#colors) for client support.                          |

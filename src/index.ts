@@ -93,12 +93,15 @@ async function main() {
             fetchHolidays(user, startDate, endDate),
         ]);
 
-        const breaks = generateBreakLessons(
-            startDate,
-            endDate,
-            holidays,
-            t("calendar.break"),
-        );
+        const breaks =
+            user.showBreaks === false
+                ? []
+                : generateBreakLessons(
+                      startDate,
+                      endDate,
+                      holidays,
+                      t("calendar.break"),
+                  );
 
         return [...lessons, ...holidays, ...breaks];
     }

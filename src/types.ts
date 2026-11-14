@@ -11,6 +11,8 @@ export interface User {
     language?: "en" | "de";
     cancelledDisplay?: "hide" | "mark" | "show";
     showHolidays?: boolean;
+    /* Whether generated school-day break ("Pause") events are included. Defaults to true */
+    showBreaks?: boolean;
     accessToken?: string;
     /* Maps WebUntis subject identifiers (e.g. "2ku1") to a custom, human-readable event title */
     subjectTitles?: Record<string, string>;
@@ -39,6 +41,8 @@ export interface Lesson {
     status: string;
     /* Renders as all day event */
     allDay?: boolean;
+    /* WebUntis lstype "ex" */
+    isExam?: boolean;
 }
 
 export interface CacheEntry {

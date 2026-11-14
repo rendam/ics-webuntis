@@ -17,6 +17,7 @@
         "unknown_teacher": "Unknown Teacher",
         "unknown_class": "Unknown Class",
         "cancelled": "Cancelled",
-        "break": "Break"
+        "break": "Break",
+        "exam": "Exam"
     }
 }

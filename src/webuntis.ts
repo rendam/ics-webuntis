@@ -297,6 +297,7 @@ export async function fetchTimetable(
                 lstext: entry.lstext || "No Text",
                 status: entry.code || "confirmed",
                 allDay: isRestrictedEntry(entry),
+                isExam: entry.lstype === "ex",
             }));
 
         if (lessons.length === 0) {

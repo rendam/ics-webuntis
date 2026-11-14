@@ -17,6 +17,7 @@
         "unknown_teacher": "Unbekannter Lehrer",
         "unknown_class": "Unbekannte Klasse",
         "cancelled": "Entfällt",
-        "break": "Pause"
+        "break": "Pause",
+        "exam": "Prüfung"
     }
 }

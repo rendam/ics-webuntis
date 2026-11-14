@@ -27,6 +27,7 @@
             "language": "en",
             "cancelledDisplay": "mark",
             "showHolidays": true,
+            "showBreaks": true,
             "accessToken": "",
             "subjectTitles": {
                 "2ku1": "Art",

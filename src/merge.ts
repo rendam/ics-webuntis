@@ -25,7 +25,7 @@ export function mergeLessons(
     for (const lesson of clampedLessons) {
         const key = `${lesson.date.toDateString()}|${lesson.subject}|${
             lesson.teacher
-        }|${lesson.room}|${lesson.class}`;
+        }|${lesson.room}|${lesson.class}|${lesson.isExam ? "ex" : ""}`;
         if (!groups.has(key)) groups.set(key, []);
         groups.get(key)!.push(lesson);
     }
