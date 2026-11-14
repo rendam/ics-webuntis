@@ -240,6 +240,24 @@ export async function fetchTimetable(
 
             logDiscoveredSubjects(user, rawTimetable);
 
+            // Temporary diagnostics: set DEBUG_RAW_ENTRIES=1 to log raw entries
+            // (no teacher/room names) so the exam marker field can be found.
+            if (process.env.DEBUG_RAW_ENTRIES === "1") {
+                const summary = rawTimetable.map((e: any) => ({
+                    date: e.date,
+                    start: e.startTime,
+                    end: e.endTime,
+                    subject: e.su?.[0]?.name,
+                    lstype: e.lstype,
+                    type: e.type,
+                    code: e.code,
+                    lstext: e.lstext,
+                    substText: e.substText,
+                    keys: Object.keys(e),
+                }));
+                console.log("RAW_ENTRIES " + JSON.stringify(summary));
+            }
+
             const subjectsWhitelist = createSubjectSet(user.subjectsWhitelist);
             const subjectsBlacklist = createSubjectSet(user.subjectsBlacklist);
             if (subjectsWhitelist.size > 0 || subjectsBlacklist.size > 0) {
