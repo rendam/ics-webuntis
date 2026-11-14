@@ -149,24 +149,6 @@ async function fetchExamInfo(
             );
             for (const p of week) {
                 if (p.is?.exam || p.exam) {
-                    if (process.env.DEBUG_RAW_ENTRIES === "1") {
-                        console.log(
-                            "RAW_EXAM " +
-                                JSON.stringify({
-                                    date: p.date,
-                                    start: p.startTime,
-                                    exam: p.exam,
-                                    lessonText: p.lessonText,
-                                    periodText: p.periodText,
-                                    periodInfo: p.periodInfo,
-                                    substText: p.substText,
-                                    cellState: p.cellState,
-                                    code: p.code,
-                                    hasInfo: p.hasInfo,
-                                    is: p.is,
-                                }),
-                        );
-                    }
                     exams.set(`${p.date}|${p.startTime}`, p.lessonText || "");
                 }
             }
@@ -299,33 +281,6 @@ export async function fetchTimetable(
                 clampedStartDate,
                 clampedEndDate,
             );
-
-            // Temporary diagnostics: set DEBUG_RAW_ENTRIES=1 to log raw entries
-            // (no teacher/room names) so the exam marker field can be found.
-            if (process.env.DEBUG_RAW_ENTRIES === "1") {
-                const summary = rawTimetable.map((e: any) => ({
-                    date: e.date,
-                    start: e.startTime,
-                    end: e.endTime,
-                    subject: e.su?.[0]?.name,
-                    lstype: e.lstype,
-                    activityType: e.activityType,
-                    lsnumber: e.lsnumber,
-                    sg: e.sg,
-                    hasSu: e.su?.length ?? 0,
-                    hasRo: e.ro?.length ?? 0,
-                    hasKl: e.kl?.length ?? 0,
-                    type: e.type,
-                    code: e.code,
-                    lstext: e.lstext,
-                    substText: e.substText,
-                    keys: Object.keys(e),
-                }));
-                // one line per entry: long single lines get split by Docker (16 KB)
-                for (const row of summary) {
-                    console.log("RAW_ENTRY " + JSON.stringify(row));
-                }
-            }
 
             const subjectsWhitelist = createSubjectSet(user.subjectsWhitelist);
             const subjectsBlacklist = createSubjectSet(user.subjectsBlacklist);
