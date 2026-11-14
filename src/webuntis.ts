@@ -265,6 +265,40 @@ export async function fetchTimetable(
                 for (const row of summary) {
                     console.log("RAW_ENTRY " + JSON.stringify(row));
                 }
+
+                // Web-client weekly API: may carry exam flags the legacy API lacks
+                try {
+                    const day = new Date(clampedStartDate);
+                    while (day <= clampedEndDate) {
+                        const week: any[] = await untis.getOwnTimetableForWeek(
+                            day,
+                        );
+                        for (const p of week) {
+                            console.log(
+                                "RAW_WEEK " +
+                                    JSON.stringify({
+                                        date: p.date,
+                                        start: p.startTime,
+                                        end: p.endTime,
+                                        subjects: p.subjects?.map(
+                                            (x: any) => x.element?.name,
+                                        ),
+                                        lessonCode: p.lessonCode,
+                                        lessonText: p.lessonText,
+                                        periodText: p.periodText,
+                                        substText: p.substText,
+                                        is: p.is,
+                                        flags: p.flags,
+                                        studentGroup: p.studentGroup,
+                                        keys: Object.keys(p),
+                                    }),
+                            );
+                        }
+                        day.setDate(day.getDate() + 7);
+                    }
+                } catch (err: any) {
+                    console.log("RAW_WEEK_ERROR " + (err?.message ?? err));
+                }
             }
 
             const subjectsWhitelist = createSubjectSet(user.subjectsWhitelist);
