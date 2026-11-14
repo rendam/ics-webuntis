@@ -149,6 +149,24 @@ async function fetchExamInfo(
             );
             for (const p of week) {
                 if (p.is?.exam || p.exam) {
+                    if (process.env.DEBUG_RAW_ENTRIES === "1") {
+                        console.log(
+                            "RAW_EXAM " +
+                                JSON.stringify({
+                                    date: p.date,
+                                    start: p.startTime,
+                                    exam: p.exam,
+                                    lessonText: p.lessonText,
+                                    periodText: p.periodText,
+                                    periodInfo: p.periodInfo,
+                                    substText: p.substText,
+                                    cellState: p.cellState,
+                                    code: p.code,
+                                    hasInfo: p.hasInfo,
+                                    is: p.is,
+                                }),
+                        );
+                    }
                     exams.set(`${p.date}|${p.startTime}`, p.lessonText || "");
                 }
             }
