@@ -117,6 +117,7 @@ The service requires a JSON configuration file.
 | `users[].accessToken`          | string  | -               | No       | Optional access token(s) required to access this user's timetable.                                                                                                                                            |
 | `users[].subjectTitles`        | object  | -               | No       | Maps WebUntis subject identifiers (e.g. `2ku1`) to a custom event title used in place of the raw subject code. Matching is case-insensitive and ignores leading/trailing whitespace.                          |
 | `users[].subjectColors`        | object  | -               | No       | Maps WebUntis subject identifiers to a CSS3 color name (e.g. `coral`, `darkblue`) applied to matching events via the ICS `COLOR` property. See [Colors](#colors) for client support.                          |
+| `users[].examTypeTitles` | object | - | No | Maps the exam type abbreviation from the lesson text (e.g. `SA` from `SA E`) to a title (e.g. `Schularbeit`). See [Exams](#exams). |
 
 ## Usage
 
@@ -213,6 +214,20 @@ The `subjectTitles` option lets you map a WebUntis subject identifier (as it app
 ```
 
 Matching is case-insensitive and ignores leading/trailing whitespace. The teacher and class suffix (e.g. `(Smith) - (12Q)`) is still appended after your custom title; the description field always keeps the raw WebUntis data for reference.
+
+### Exams
+
+Lessons that WebUntis flags as exams (found via the web-client weekly API, personal timetable only) get a `Prüfung:`/`Exam:` title prefix and `CATEGORIES:EXAM`. The API doesn't return the exam type name (e.g. "Schularbeit"), only an abbreviation in the lesson text (e.g. `SA E`). Use `examTypeTitles` to map the first word to a readable title:
+
+```json
+{
+    "examTypeTitles": {
+        "SA": "Schularbeit"
+    }
+}
+```
+
+An exam then reads `Prüfung: Schularbeit E (Smith)`; without a mapping it reads `Prüfung: SA E (Smith)`. The exam type keys can also be used in `subjectColors` (see [Colors](#colors)); an exam-type color takes precedence over the subject color.
 
 ### Colors
 

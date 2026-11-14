@@ -388,6 +388,11 @@ export async function fetchTimetable(
                 status: entry.code || "confirmed",
                 allDay: isRestrictedEntry(entry),
                 isExam: examInfo.has(`${entry.date}|${entry.startTime}`),
+                examType:
+                    examInfo
+                        .get(`${entry.date}|${entry.startTime}`)
+                        ?.trim()
+                        .split(/\s+/)[0] || undefined,
             }));
 
         if (lessons.length === 0) {

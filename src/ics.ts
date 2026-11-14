@@ -9,6 +9,8 @@ export interface IcsOptions {
     subjectTitles?: Record<string, string>;
     /* Maps WebUntis subject identifiers to a CSS3 color name, see User.subjectColors */
     subjectColors?: Record<string, string>;
+    /* Maps exam type abbreviations (e.g. "SA") to a title, see User.examTypeTitles */
+    examTypeTitles?: Record<string, string>;
     /* Own class name (e.g. the WebUntis username), stripped from the class list shown in event titles */
     ownClassName?: string;
 }
@@ -24,6 +26,7 @@ export function lessonsToIcs(
         cancelledDisplay = "mark",
         subjectTitles,
         subjectColors,
+        examTypeTitles,
         ownClassName,
     } = options;
     const normalizedOwnClass = ownClassName?.trim().toLowerCase();
@@ -134,7 +137,13 @@ export function lessonsToIcs(
         }
 
         if (l.isExam) {
-            calSummary = `${t("calendar.exam")}: ${calSummary}`;
+            const examLabel = l.examType
+                ? (resolveSubjectOverride(l.examType, examTypeTitles) ??
+                  l.examType)
+                : "";
+            calSummary = `${t("calendar.exam")}: ${[examLabel, calSummary]
+                .filter(Boolean)
+                .join(" ")}`;
         }
 
         const calDescription = `${t("calendar.subject")}: ${
@@ -168,7 +177,12 @@ export function lessonsToIcs(
             status: calStatus as ICalEventStatus,
             categories: l.isExam ? [{ name: "EXAM" }] : undefined,
         });
-        eventColors.push(resolveSubjectOverride(l.subject, subjectColors));
+        eventColors.push(
+            (l.examType
+                ? resolveSubjectOverride(l.examType, subjectColors)
+                : undefined) ??
+                resolveSubjectOverride(l.subject, subjectColors),
+        );
     }
 
     return injectEventColors(cal.toString(), eventColors);

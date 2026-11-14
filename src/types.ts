@@ -18,6 +18,8 @@ export interface User {
     subjectTitles?: Record<string, string>;
     /* Maps WebUntis subject identifiers (e.g. "2ku1") to a CSS3 color name (RFC 7986 COLOR) for the generated event */
     subjectColors?: Record<string, string>;
+    /* Maps the exam type abbreviation from the WebUntis lesson text (e.g. "SA" from "SA E") to a title (e.g. "Schularbeit"). The same keys also work in subjectColors */
+    examTypeTitles?: Record<string, string>;
 }
 
 export interface Config {
@@ -43,6 +45,8 @@ export interface Lesson {
     allDay?: boolean;
     /* WebUntis lstype "ex" */
     isExam?: boolean;
+    /* Exam type abbreviation, first word of the exam lesson text (e.g. "SA") */
+    examType?: string;
 }
 
 export interface CacheEntry {

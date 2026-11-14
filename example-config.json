@@ -35,7 +35,11 @@
             },
             "subjectColors": {
                 "2ku1": "coral",
-                "2WR6": "darkblue"
+                "2WR6": "darkblue",
+                "SA": "red"
+            },
+            "examTypeTitles": {
+                "SA": "Schularbeit"
             }
         }
     ]

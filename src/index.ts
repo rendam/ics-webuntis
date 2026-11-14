@@ -153,6 +153,7 @@ async function main() {
                     cancelledDisplay,
                     subjectTitles: user.subjectTitles,
                     subjectColors: user.subjectColors,
+                    examTypeTitles: user.examTypeTitles,
                     ownClassName: user.username,
                 },
             );
@@ -217,6 +218,7 @@ async function main() {
                         cancelledDisplay,
                         subjectTitles: user.subjectTitles,
                         subjectColors: user.subjectColors,
+                    examTypeTitles: user.examTypeTitles,
                         ownClassName: user.username,
                     },
                 );
@@ -268,6 +270,7 @@ async function main() {
                     cancelledDisplay,
                     subjectTitles: user.subjectTitles,
                     subjectColors: user.subjectColors,
+                    examTypeTitles: user.examTypeTitles,
                     ownClassName: user.username,
                 },
             );
